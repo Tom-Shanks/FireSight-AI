@@ -1,0 +1,69 @@
+# API and Web Framework
+fastapi==0.95.1
+uvicorn==0.22.0
+mangum==0.17.0  # AWS Lambda compatibility
+pydantic==1.10.7
+
+# Data Processing
+numpy==1.24.3
+pandas==2.0.1
+geopandas==0.13.0
+rasterio==1.3.7
+pyproj==3.5.0
+shapely==2.0.1
+fiona==1.9.3
+scipy==1.10.1
+scikit-learn==1.2.2
+xarray==2023.4.2
+netCDF4==1.6.3
+
+# Machine Learning
+xgboost==1.7.5
+scikit-learn==1.2.2
+lightgbm==3.3.5
+tensorflow-lite==2.12.0  # Lightweight TF implementation for Lambda
+onnxruntime==1.15.0  # Model optimization
+
+# Geospatial
+pyproj==3.5.0
+rioxarray==0.14.1
+rasterstats==0.18.0
+satpy==0.39.0  # Satellite data reading
+affine==2.4.0
+sentinelsat==1.2.0  # Sentinel satellite data
+
+# Visualization (for model debugging)
+matplotlib==3.7.1
+seaborn==0.12.2
+folium==0.14.0
+
+# Database
+psycopg2-binary==2.9.6
+sqlalchemy==2.0.12
+geoalchemy2==0.13.0
+pymongo==4.3.3
+redis==4.5.5
+
+# AWS
+boto3==1.26.133
+awscli==1.27.133
+s3fs==2023.4.0
+
+# Testing
+pytest==7.3.1
+pytest-cov==4.1.0
+
+# Utilities
+requests==2.30.0
+python-dotenv==1.0.0
+tqdm==4.65.0
+joblib==1.2.0
+pyyaml==6.0
+python-jose==3.3.0  # For JWT token handling
+cachetools==5.3.0
+
+# Development
+black==23.3.0
+isort==5.12.0
+flake8==6.0.0
+mypy==1.3.0 

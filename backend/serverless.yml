@@ -1,0 +1,223 @@
+service: wildfire-prediction-system
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.9
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-west-2'}
+  memorySize: 128 # Keep within free tier
+  timeout: 6 # Keep under 10 seconds for free tier
+  logRetentionInDays: 7 # Minimum to reduce costs
+  environment:
+    STAGE: ${self:provider.stage}
+    REGION: ${self:provider.region}
+    # Database connection strings will be populated from SSM Parameter Store
+    DB_CONNECTION_STRING: ${ssm:/wildfire/${self:provider.stage}/db-connection-string~true}
+    REDIS_URL: ${ssm:/wildfire/${self:provider.stage}/redis-url~true, ''}
+    S3_BUCKET: ${self:custom.s3Bucket}
+    WEATHER_API_KEY: ${ssm:/wildfire/${self:provider.stage}/weather-api-key~true, ''}
+
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "s3:PutObject"
+            - "s3:GetObject"
+            - "s3:ListBucket"
+          Resource:
+            - "arn:aws:s3:::${self:custom.s3Bucket}/*"
+            - "arn:aws:s3:::${self:custom.s3Bucket}"
+        - Effect: "Allow"
+          Action:
+            - "logs:CreateLogGroup"
+            - "logs:CreateLogStream"
+            - "logs:PutLogEvents"
+          Resource: "*"
+
+custom:
+  s3Bucket: wildfire-data-${self:provider.stage}-${self:provider.region}
+  pythonRequirements:
+    dockerizePip: false
+    slim: true
+    layer: true
+    usePoetry: false
+    useStaticCache: true
+    useDownloadCache: true
+    cacheLocation: ".serverless/.requirements_cache"
+  prune:
+    automatic: true
+    includeLayers: true
+    number: 3
+  apiGateway:
+    shouldStartNameWithService: true
+    minimumCompressionSize: 1024
+  
+plugins:
+  - serverless-python-requirements
+  - serverless-prune-plugin
+  - serverless-api-gateway-throttling
+
+package:
+  individually: true
+  patterns:
+    - "!node_modules/**"
+    - "!.git/**"
+    - "!.venv/**"
+    - "!.serverless/**"
+    - "!tests/**"
+    - "!__pycache__/**"
+    - "!.pytest_cache/**"
+    - "!*.md"
+    - "!package*.json"
+    - "!Makefile"
+    - "!.gitignore"
+    - "!.env*"
+
+functions:
+  # API Gateway functions
+  api:
+    handler: api/main.handler
+    module: backend
+    description: "Main API endpoint for the wildfire prediction system"
+    events:
+      - http:
+          path: /api/{proxy+}
+          method: any
+          cors: true
+    package:
+      patterns:
+        - "api/**/*.py"
+        - "!api/**/*.pyc"
+
+  # Data Pipeline functions
+  fetchNasaFirms:
+    handler: data_pipeline.nasa_firms.handler
+    module: backend
+    description: "Fetches NASA FIRMS satellite data for fire detection"
+    timeout: 10 # Maximum for free tier
+    events:
+      - schedule: rate(12 hours) # Twice daily to stay within API limits
+    package:
+      patterns:
+        - "data_pipeline/nasa_firms.py"
+        - "data_pipeline/utils.py"
+
+  fetchNoaaWeather:
+    handler: data_pipeline.noaa_weather.handler
+    module: backend
+    description: "Fetches NOAA weather data for prediction models"
+    timeout: 10
+    events:
+      - schedule: rate(12 hours)
+    package:
+      patterns:
+        - "data_pipeline/noaa_weather.py"
+        - "data_pipeline/utils.py"
+
+  processTerrainData:
+    handler: data_pipeline.terrain_processor.handler
+    module: backend
+    description: "Processes USGS terrain data for prediction models"
+    memorySize: 256 # Needs more memory for geospatial processing
+    timeout: 15
+    events:
+      - schedule: rate(7 days) # Weekly, terrain changes slowly
+    package:
+      patterns:
+        - "data_pipeline/terrain_processor.py"
+        - "data_pipeline/utils.py"
+
+  calculateVegetationIndices:
+    handler: data_pipeline.vegetation_indices.handler
+    module: backend
+    description: "Calculates vegetation indices (NDVI) from satellite imagery"
+    memorySize: 256
+    timeout: 15
+    events:
+      - schedule: rate(7 days)
+    package:
+      patterns:
+        - "data_pipeline/vegetation_indices.py"
+        - "data_pipeline/utils.py"
+
+  # Prediction Model functions
+  predictWildfireRisk:
+    handler: models.risk_prediction.handler
+    module: backend
+    description: "Predicts wildfire risk using historical and current data"
+    memorySize: 512 # ML model needs more memory
+    timeout: 20
+    events:
+      - http:
+          path: /predict/risk
+          method: post
+          cors: true
+    package:
+      patterns:
+        - "models/risk_prediction.py"
+        - "models/utils.py"
+
+  simulateFireSpread:
+    handler: models.fire_spread.handler
+    module: backend
+    description: "Simulates wildfire spread using cellular automata"
+    memorySize: 512
+    timeout: 25
+    events:
+      - http:
+          path: /simulate/spread
+          method: post
+          cors: true
+    package:
+      patterns:
+        - "models/fire_spread.py"
+        - "models/utils.py"
+
+  assessDamage:
+    handler: models.damage_assessment.handler
+    module: backend
+    description: "Assesses damage from wildfires using satellite imagery"
+    memorySize: 512
+    timeout: 25
+    events:
+      - http:
+          path: /assess/damage
+          method: post
+          cors: true
+    package:
+      patterns:
+        - "models/damage_assessment.py"
+        - "models/utils.py"
+
+resources:
+  Resources:
+    # S3 bucket for storing prediction data and model artifacts
+    WildfireDataBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.s3Bucket}
+        AccessControl: Private
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: true
+          BlockPublicPolicy: true
+          IgnorePublicAcls: true
+          RestrictPublicBuckets: true
+        LifecycleConfiguration:
+          Rules:
+            - Id: DeleteOldData
+              Status: Enabled
+              ExpirationInDays: 90 # Keep data for 90 days to limit storage
+
+    # API Gateway throttling to stay within free tier
+    ApiGatewayThrottlingSettings:
+      Type: AWS::ApiGateway::MethodSettings
+      Properties:
+        ResourceId: "*"
+        RestApiId: !Ref ApiGatewayRestApi
+        HttpMethod: "*"
+        StageName: ${self:provider.stage}
+        ThrottlingBurstLimit: 10
+        ThrottlingRateLimit: 5 
