@@ -13,11 +13,11 @@ provider:
   environment:
     STAGE: ${self:provider.stage}
     REGION: ${self:provider.region}
-    # Database connection strings will be populated from SSM Parameter Store
-    DB_CONNECTION_STRING: ${ssm:/wildfire/${self:provider.stage}/db-connection-string~true}
-    REDIS_URL: ${ssm:/wildfire/${self:provider.stage}/redis-url~true, ''}
+    # Using default values instead of SSM parameters for initial deployment
+    DB_CONNECTION_STRING: ''
+    REDIS_URL: ''
     S3_BUCKET: ${self:custom.s3Bucket}
-    WEATHER_API_KEY: ${ssm:/wildfire/${self:provider.stage}/weather-api-key~true, ''}
+    WEATHER_API_KEY: ''
 
   iam:
     role:
@@ -40,7 +40,7 @@ provider:
 custom:
   s3Bucket: wildfire-data-${self:provider.stage}-${self:provider.region}
   pythonRequirements:
-    dockerizePip: false
+    dockerizePip: true # Enable Docker for building dependencies with C extensions
     slim: true
     layer: true
     usePoetry: false

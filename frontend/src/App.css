@@ -1,0 +1,64 @@
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  color: #ff6b35;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  color: #f7c59f;
+}
+
+.status-container {
+  background-color: #1e2129;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  width: 80%;
+  max-width: 600px;
+}
+
+.description {
+  font-size: 1.2rem;
+  max-width: 800px;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.feature-list {
+  background-color: rgba(255, 107, 53, 0.1);
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 600px;
+}
+
+.feature-list h3 {
+  color: #ff6b35;
+  margin-top: 0;
+}
+
+.feature-list ul {
+  text-align: left;
+  padding-left: 30px;
+}
+
+.feature-list li {
+  margin-bottom: 10px;
+} 
