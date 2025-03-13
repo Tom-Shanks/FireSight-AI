@@ -30,7 +30,7 @@ rioxarray==0.14.1
 rasterstats==0.18.0
 satpy==0.39.0  # Satellite data reading
 affine==2.4.0
-sentinelsat==1.2.0  # Sentinel satellite data
+sentinelsat==1.2.1  # Sentinel satellite data
 
 # Visualization (for model debugging)
 matplotlib==3.7.1
