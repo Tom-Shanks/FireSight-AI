@@ -21,7 +21,7 @@ netCDF4==1.6.3
 xgboost==1.7.5
 scikit-learn==1.2.2
 lightgbm==3.3.5
-tensorflow-lite==2.12.0  # Lightweight TF implementation for Lambda
+tflite-runtime==2.12.0  # Lightweight TF implementation for Lambda
 onnxruntime==1.15.0  # Model optimization
 
 # Geospatial
