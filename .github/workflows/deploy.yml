@@ -1,10 +1,10 @@
-name: Deploy Wildfire Prediction System
+name: Deploy Wildfire Prediction System (disabled)
 
 on:
   push:
-    branches: [ main ]
+    branches: [ disabled-main ]  # Temporarily disabled
   pull_request:
-    branches: [ main ]
+    branches: [ disabled-main ]  # Temporarily disabled
 
 jobs:
   test:
