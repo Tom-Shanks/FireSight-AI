@@ -1,25 +1,139 @@
 const express = require('express');
 const router = express.Router();
+const { fireData, weather, satellite } = require('../services');
 
 // Get recent fires endpoint
-router.get('/recent-fires', (req, res) => {
+router.get('/recent-fires', async (req, res) => {
   try {
     const days = parseInt(req.query.days) || 7;
     
-    // Generate mock data for recent fires
-    const recentFires = generateRecentFires(days);
+    // Try to get real fire data
+    let firesData = [];
+    let dataSource = 'mock';
     
-    res.json(recentFires);
+    try {
+      console.log('Fetching active fires data from NASA FIRMS API');
+      
+      // Default to continental US bounding box for demonstration
+      // In a real app, this could be configured or user-specific
+      const minLat = 24.0;  // Southern US border
+      const maxLat = 49.0;  // Northern US border
+      const minLon = -125.0; // Western US border
+      const maxLon = -66.0;  // Eastern US border
+      
+      firesData = await fireData.getActiveFires(minLat, maxLat, minLon, maxLon, 'viirs-snpp', days);
+      
+      if (firesData && firesData.length > 0) {
+        dataSource = 'nasa-firms';
+        console.log(`Successfully retrieved ${firesData.length} fires from NASA FIRMS API`);
+        
+        // Transform the data to match our API format
+        firesData = transformFiresData(firesData);
+      } else {
+        console.log('No fires data returned from NASA FIRMS API, falling back to mock data');
+        firesData = generateRecentFires(days);
+      }
+    } catch (error) {
+      console.warn('Failed to fetch fires from NASA FIRMS API:', error.message);
+      console.log('Falling back to mock fire data');
+      firesData = generateRecentFires(days);
+    }
+    
+    res.json({
+      data_source: dataSource,
+      fires: firesData
+    });
   } catch (error) {
     console.error('Error retrieving recent fires:', error);
     res.status(500).json({ error: 'Internal server error while retrieving recent fires data' });
   }
 });
 
+// Transform NASA FIRMS data to our API format
+function transformFiresData(firmsData) {
+  const locations = [
+    'Redwood Forest', 'Eagle Mountain', 'Pinecrest Valley', 
+    'Oakridge Hills', 'Cedar Canyon', 'Maple Woods',
+    'Aspen Heights', 'Willow Creek', 'Blue River Reserve',
+    'Green Valley', 'Rocky Peak', 'Sunset Ridge'
+  ];
+  
+  return firmsData.map((fire, index) => {
+    // Generate a random location name
+    const locationIndex = Math.floor(Math.random() * locations.length);
+    
+    // Random containment percentage and status (these aren't provided by FIRMS)
+    const containment = Math.floor(Math.random() * 100);
+    const status = containment === 100 ? 'contained' : 
+                  containment > 75 ? 'nearly contained' : 
+                  containment > 40 ? 'partially contained' : 'active';
+    
+    // Parse date and time from FIRMS format
+    let detectionTime;
+    if (fire.detectionDate && fire.detectionTime) {
+      // Parse date in format YYYY-MM-DD and time in format HHMM
+      const date = fire.detectionDate;
+      const time = fire.detectionTime.toString().padStart(4, '0');
+      
+      // Convert to ISO format
+      const year = date.substring(0, 4);
+      const month = date.substring(5, 7);
+      const day = date.substring(8, 10);
+      const hour = time.substring(0, 2);
+      const minute = time.substring(2, 4);
+      
+      detectionTime = `${year}-${month}-${day}T${hour}:${minute}:00Z`;
+    } else {
+      // Fallback to current time
+      detectionTime = new Date().toISOString();
+    }
+    
+    // Calculate fire size (not provided by FIRMS, so we'll estimate based on intensity)
+    const intensity = fire.intensity || fire.bright_ti4 || fire.bright_ti5 || 5;
+    const normalizedIntensity = Math.min(Math.max(intensity / 400, 0.1), 1); // Normalize to 0.1-1
+    
+    const sizeAcres = Math.floor(normalizedIntensity * 5000);
+    
+    return {
+      id: `fire-${Date.now()}-${index}`,
+      name: `${locations[locationIndex]} Fire`,
+      location: {
+        latitude: fire.latitude,
+        longitude: fire.longitude,
+        description: `Near ${locations[locationIndex]}`
+      },
+      detection_time: detectionTime,
+      status: status,
+      intensity: Math.floor(normalizedIntensity * 10), // Scale to 1-10
+      size: {
+        acres: sizeAcres,
+        hectares: Math.floor(sizeAcres * 0.4047)
+      },
+      containment_percentage: containment,
+      cause: Math.random() > 0.3 ? 'natural' : 'human',
+      resources_deployed: {
+        firefighters: Math.floor(Math.random() * 200) + 50,
+        vehicles: Math.floor(Math.random() * 30) + 5,
+        aircraft: Math.floor(Math.random() * 5)
+      },
+      firms_data: {
+        confidence: fire.confidence || 'nominal',
+        bright_ti4: fire.bright_ti4,
+        bright_ti5: fire.bright_ti5,
+        frp: fire.frp
+      }
+    };
+  });
+}
+
 // Get high risk areas endpoint
-router.get('/high-risk-areas', (req, res) => {
+router.get('/high-risk-areas', async (req, res) => {
   try {
     const threshold = parseFloat(req.query.threshold) || 0.7;
+    
+    // In a real implementation, high-risk areas would be calculated from 
+    // a combination of weather data, vegetation density, and historical patterns
+    // For now, we'll use mock data but include some real data-based elements where possible
     
     // Generate mock data for high risk areas
     const highRiskAreas = generateHighRiskAreas(threshold);
@@ -28,6 +142,72 @@ router.get('/high-risk-areas', (req, res) => {
   } catch (error) {
     console.error('Error retrieving high risk areas:', error);
     res.status(500).json({ error: 'Internal server error while retrieving high risk areas data' });
+  }
+});
+
+// Get dashboard stats
+router.get('/dashboard-stats', async (req, res) => {
+  try {
+    // Try to get real fire counts
+    let activeFires = 0;
+    let weatherData = null;
+    let realDataIncluded = false;
+    
+    try {
+      // Get active fires count from NASA FIRMS data
+      // Default to a US bounding box
+      const minLat = 24.0;
+      const maxLat = 49.0;
+      const minLon = -125.0;
+      const maxLon = -66.0;
+      
+      const firesData = await fireData.getActiveFires(minLat, maxLat, minLon, maxLon, 'viirs-snpp', 1);
+      
+      if (firesData && firesData.length > 0) {
+        activeFires = firesData.length;
+        realDataIncluded = true;
+      }
+      
+      // Get sample weather data for a major city (e.g., San Francisco)
+      weatherData = await weather.getCurrentWeather(37.7749, -122.4194);
+    } catch (error) {
+      console.warn('Failed to fetch real data for dashboard:', error.message);
+      // Continue with mock data for the rest
+    }
+    
+    // Generate mock stats with any available real data
+    const regions = ['Northern California', 'Southern California', 'Central Valley', 'Sierra Nevada', 'Coastal'];
+    const fireTypes = ['Brush', 'Forest', 'Grass', 'Structure', 'Other'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    const stats = {
+      activeFires: realDataIncluded ? activeFires : Math.floor(Math.random() * 20) + 5,
+      highRiskAreas: Math.floor(Math.random() * 50) + 20,
+      averageRiskScore: Math.floor(Math.random() * 40) + 40,
+      recentRainfall: weatherData ? (weatherData.rain?.['1h'] || 0) : Math.floor(Math.random() * 5),
+      
+      riskByRegion: regions.map(region => ({
+        region,
+        riskScore: Math.floor(Math.random() * 100)
+      })),
+      
+      firesByType: fireTypes.map(type => ({
+        type,
+        count: Math.floor(Math.random() * 30) + 1
+      })),
+      
+      monthlyPredictions: months.map(month => ({
+        month,
+        predictedFires: Math.floor(Math.random() * 15) + (month.match(/Jul|Aug|Sep/) ? 10 : 0)
+      })),
+      
+      dataSource: realDataIncluded ? 'partially-real' : 'simulation'
+    };
+    
+    res.json(stats);
+  } catch (error) {
+    console.error('Error retrieving dashboard stats:', error);
+    res.status(500).json({ error: 'Internal server error while retrieving dashboard stats' });
   }
 });
 
