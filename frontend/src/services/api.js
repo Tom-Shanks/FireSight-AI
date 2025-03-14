@@ -1,7 +1,10 @@
 import axios from 'axios';
+import mockData from '../mockData/dashboard';
 
 // Get the API URL from environment variables, or use a default for development
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:5000/api';
+
+console.log('Using API URL:', API_URL);
 
 // Create an axios instance with default config
 const api = axios.create({
@@ -9,7 +12,26 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  // Ensure cookies are sent with requests
+  withCredentials: false,
+  // Timeout after 10 seconds
+  timeout: 10000,
 });
+
+// Add response interceptor for debugging
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    console.error('API Error:', error.message);
+    if (error.response) {
+      console.error('Status:', error.response.status);
+      console.error('Data:', error.response.data);
+    }
+    return Promise.reject(error);
+  }
+);
 
 // API endpoints
 export const endpoints = {
@@ -30,86 +52,118 @@ export const endpoints = {
   highRiskAreas: '/data/high-risk-areas',
 };
 
-// API service functions
+// Health check
+export const checkHealthStatus = async () => {
+  try {
+    console.log('Attempting health check to:', API_URL + endpoints.health);
+    const response = await api.get(endpoints.health);
+    return response.data;
+  } catch (error) {
+    console.error('Health check failed:', error);
+    // If in development and API is unreachable, provide mock data
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('Falling back to mock health data for development');
+      return {
+        status: 'mock-healthy',
+        message: 'MOCK API (Real API unreachable)',
+        timestamp: new Date().toISOString(),
+        version: '1.0.0-mock'
+      };
+    }
+    throw error;
+  }
+};
+
+// Risk prediction
+export const getRiskPrediction = async (requestData) => {
+  try {
+    const response = await api.post(endpoints.predictRisk, requestData);
+    return response.data;
+  } catch (error) {
+    console.error('Risk prediction failed:', error);
+    throw error;
+  }
+};
+
+// Fire spread simulation
+export const simulateFireSpread = async (requestData) => {
+  try {
+    const response = await api.post(endpoints.simulateFireSpread, requestData);
+    return response.data;
+  } catch (error) {
+    console.error('Fire spread simulation failed:', error);
+    throw error;
+  }
+};
+
+// Damage assessment
+export const assessDamage = async (requestData) => {
+  try {
+    const response = await api.post(endpoints.assessDamage, requestData);
+    return response.data;
+  } catch (error) {
+    console.error('Damage assessment failed:', error);
+    throw error;
+  }
+};
+
+// Get dashboard stats
+export const getDashboardStats = async () => {
+  try {
+    const response = await api.get(`/data/dashboard-stats`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch dashboard stats:', error);
+    // If in development and API is unreachable, provide mock data
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('Falling back to mock dashboard stats for development');
+      return mockData.dashboardStats;
+    }
+    throw error;
+  }
+};
+
+// Get recent fires
+export const getRecentFires = async (days = 7) => {
+  try {
+    const response = await api.get(`${endpoints.recentFires}?days=${days}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch recent fires:', error);
+    // If in development and API is unreachable, provide mock data
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('Falling back to mock fire data for development');
+      return mockData.recentFires;
+    }
+    throw error;
+  }
+};
+
+// Get high risk areas
+export const getHighRiskAreas = async (threshold = 0.7) => {
+  try {
+    const response = await api.get(`${endpoints.highRiskAreas}?threshold=${threshold}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch high risk areas:', error);
+    // If in development and API is unreachable, provide mock data
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('Falling back to mock high risk areas data for development');
+      return mockData.highRiskAreas;
+    }
+    throw error;
+  }
+};
+
+// API service functions (for backward compatibility)
 const apiService = {
-  // Health check
-  checkHealth: async () => {
-    try {
-      const response = await api.get(endpoints.health);
-      return response.data;
-    } catch (error) {
-      console.error('Health check failed:', error);
-      throw error;
-    }
-  },
-
-  // Risk prediction
-  predictRisk: async (location, radius, startDate, endDate) => {
-    try {
-      const response = await api.post(endpoints.predictRisk, {
-        location,
-        radius_km: radius,
-        start_date: startDate,
-        end_date: endDate,
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Risk prediction failed:', error);
-      throw error;
-    }
-  },
-
-  // Fire spread simulation
-  simulateFireSpread: async (ignitionPoints, simulationHours, resolutionMeters) => {
-    try {
-      const response = await api.post(endpoints.simulateFireSpread, {
-        ignition_points: ignitionPoints,
-        simulation_hours: simulationHours,
-        resolution_meters: resolutionMeters,
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Fire spread simulation failed:', error);
-      throw error;
-    }
-  },
-
-  // Damage assessment
-  assessDamage: async (fireArea, preFireDate, postFireDate) => {
-    try {
-      const response = await api.post(endpoints.assessDamage, {
-        fire_area: fireArea,
-        pre_fire_date: preFireDate,
-        post_fire_date: postFireDate,
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Damage assessment failed:', error);
-      throw error;
-    }
-  },
-
-  // Get recent fires
-  getRecentFires: async (days = 7) => {
-    try {
-      const response = await api.get(`${endpoints.recentFires}?days=${days}`);
-      return response.data;
-    } catch (error) {
-      console.error('Failed to fetch recent fires:', error);
-      throw error;
-    }
-  },
-
-  // Get high risk areas
-  getHighRiskAreas: async (threshold = 0.7) => {
-    try {
-      const response = await api.get(`${endpoints.highRiskAreas}?threshold=${threshold}`);
-      return response.data;
-    } catch (error) {
-      console.error('Failed to fetch high risk areas:', error);
-      throw error;
-    }
-  },
+  checkHealth: checkHealthStatus,
+  predictRisk: getRiskPrediction,
+  simulateFireSpread,
+  assessDamage,
+  getRecentFires,
+  getHighRiskAreas,
+  getDashboardStats
 };
 
 export default apiService; 

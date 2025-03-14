@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
 import { 
   AppBar, 
   Toolbar, 
@@ -10,58 +9,59 @@ import {
   List, 
   ListItem, 
   ListItemIcon, 
-  ListItemText,
-  Box,
+  ListItemText, 
+  Box, 
   Divider,
   useMediaQuery,
-  useTheme
+  useTheme,
+  Container
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import HomeIcon from '@mui/icons-material/Home';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
-import WarningIcon from '@mui/icons-material/Warning';
-import InfoIcon from '@mui/icons-material/Info';
+import {
+  Menu as MenuIcon,
+  Dashboard as DashboardIcon,
+  Map as MapIcon,
+  Assessment as AssessmentIcon,
+  Notifications as NotificationsIcon,
+  Settings as SettingsIcon,
+  Info as InfoIcon,
+  LocalFireDepartment as FireIcon
+} from '@mui/icons-material';
 
-const Navigation = () => {
+const Navigation = ({ onNavigate, currentPage }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
+  
   const menuItems = [
-    { text: 'Home', icon: <HomeIcon />, path: '/' },
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-    { text: 'Risk Assessment', icon: <AssessmentIcon />, path: '/dashboard' },
-    { text: 'Fire Simulation', icon: <LocalFireDepartmentIcon />, path: '/dashboard' },
-    { text: 'Alerts', icon: <WarningIcon />, path: '/alerts' },
-    { text: 'About', icon: <InfoIcon />, path: '/about' },
+    { id: 'dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
+    { id: 'map', label: 'Risk Map', icon: <MapIcon /> },
+    { id: 'prediction', label: 'Risk Prediction', icon: <AssessmentIcon /> },
+    { id: 'alerts', label: 'Alerts', icon: <NotificationsIcon /> },
+    { id: 'about', label: 'About', icon: <InfoIcon /> },
+    { id: 'settings', label: 'Settings', icon: <SettingsIcon /> }
   ];
-
+  
   const toggleDrawer = (open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
     setDrawerOpen(open);
   };
-
-  const isActive = (path) => {
-    if (path === '/') {
-      return location.pathname === path;
+  
+  const handleNavigation = (pageId) => {
+    onNavigate(pageId);
+    if (isMobile) {
+      setDrawerOpen(false);
     }
-    return location.pathname.startsWith(path);
   };
-
-  const drawer = (
+  
+  const drawerContent = (
     <Box
       sx={{ width: 250 }}
       role="presentation"
-      onClick={toggleDrawer(false)}
-      onKeyDown={toggleDrawer(false)}
     >
       <Box sx={{ p: 2, display: 'flex', alignItems: 'center' }}>
-        <LocalFireDepartmentIcon sx={{ mr: 1, color: 'primary.main' }} />
+        <FireIcon sx={{ color: 'error.main', mr: 1, fontSize: 30 }} />
         <Typography variant="h6" component="div">
           FireSight AI
         </Typography>
@@ -71,76 +71,98 @@ const Navigation = () => {
         {menuItems.map((item) => (
           <ListItem 
             button 
-            key={item.text} 
-            component={Link} 
-            to={item.path}
-            selected={isActive(item.path)}
+            key={item.id} 
+            onClick={() => handleNavigation(item.id)}
+            selected={currentPage === item.id}
             sx={{
               '&.Mui-selected': {
-                backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                backgroundColor: 'primary.light',
                 '&:hover': {
-                  backgroundColor: 'rgba(255, 107, 53, 0.2)',
+                  backgroundColor: 'primary.light',
                 },
               },
             }}
           >
-            <ListItemIcon sx={{ color: isActive(item.path) ? 'primary.main' : 'inherit' }}>
+            <ListItemIcon sx={{ color: currentPage === item.id ? 'primary.main' : 'inherit' }}>
               {item.icon}
             </ListItemIcon>
-            <ListItemText primary={item.text} />
+            <ListItemText 
+              primary={item.label} 
+              primaryTypographyProps={{
+                fontWeight: currentPage === item.id ? 'bold' : 'normal',
+              }}
+            />
           </ListItem>
         ))}
       </List>
     </Box>
   );
-
+  
   return (
     <>
       <AppBar position="static">
-        <Toolbar>
-          {isMobile && (
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              sx={{ mr: 2 }}
-              onClick={toggleDrawer(true)}
-            >
-              <MenuIcon />
-            </IconButton>
-          )}
-          
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <LocalFireDepartmentIcon sx={{ mr: 1 }} />
-              FireSight AI
-            </Box>
-          </Typography>
-          
-          {!isMobile && (
-            <Box sx={{ display: 'flex' }}>
-              {menuItems.slice(0, 4).map((item) => (
-                <Button 
-                  key={item.text}
-                  color="inherit" 
-                  component={Link} 
-                  to={item.path}
-                  sx={{ 
-                    mx: 1,
-                    borderBottom: isActive(item.path) ? '2px solid white' : 'none',
-                    borderRadius: 0,
-                    '&:hover': {
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                    }
-                  }}
+        <Container maxWidth="xl">
+          <Toolbar disableGutters>
+            {isMobile ? (
+              <>
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  aria-label="menu"
+                  onClick={toggleDrawer(true)}
+                  sx={{ mr: 2 }}
                 >
-                  {item.text}
-                </Button>
-              ))}
-            </Box>
-          )}
-        </Toolbar>
+                  <MenuIcon />
+                </IconButton>
+                <Typography variant="h6" component="div" sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
+                  <FireIcon sx={{ mr: 1 }} />
+                  FireSight AI
+                </Typography>
+              </>
+            ) : (
+              <>
+                <FireIcon sx={{ mr: 1 }} />
+                <Typography variant="h6" component="div" sx={{ mr: 4 }}>
+                  FireSight AI
+                </Typography>
+                <Box sx={{ flexGrow: 1, display: 'flex' }}>
+                  {menuItems.slice(0, 4).map((item) => (
+                    <Button 
+                      key={item.id}
+                      color="inherit"
+                      onClick={() => handleNavigation(item.id)}
+                      sx={{ 
+                        mx: 1,
+                        fontWeight: currentPage === item.id ? 'bold' : 'normal',
+                        borderBottom: currentPage === item.id ? '2px solid white' : 'none',
+                        borderRadius: 0,
+                        paddingBottom: '4px'
+                      }}
+                    >
+                      {item.label}
+                    </Button>
+                  ))}
+                </Box>
+                <Box>
+                  {menuItems.slice(4).map((item) => (
+                    <IconButton 
+                      key={item.id} 
+                      color="inherit"
+                      onClick={() => handleNavigation(item.id)}
+                      sx={{ 
+                        ml: 1,
+                        backgroundColor: currentPage === item.id ? 'rgba(255, 255, 255, 0.2)' : 'transparent'
+                      }}
+                    >
+                      {item.icon}
+                    </IconButton>
+                  ))}
+                </Box>
+              </>
+            )}
+          </Toolbar>
+        </Container>
       </AppBar>
       
       <Drawer
@@ -148,7 +170,7 @@ const Navigation = () => {
         open={drawerOpen}
         onClose={toggleDrawer(false)}
       >
-        {drawer}
+        {drawerContent}
       </Drawer>
     </>
   );
