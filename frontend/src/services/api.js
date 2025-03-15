@@ -60,17 +60,25 @@ export const checkHealthStatus = async () => {
     return response.data;
   } catch (error) {
     console.error('Health check failed:', error);
-    // If in development and API is unreachable, provide mock data
-    if (process.env.NODE_ENV === 'development') {
-      console.warn('Falling back to mock health data for development');
-      return {
-        status: 'mock-healthy',
-        message: 'MOCK API (Real API unreachable)',
-        timestamp: new Date().toISOString(),
-        version: '1.0.0-mock'
-      };
+    // Try with api prefix as fallback
+    try {
+      console.log('Retrying with /api prefix:', API_URL + '/api' + endpoints.health);
+      const fallbackResponse = await axios.get(API_URL + '/api' + endpoints.health);
+      return fallbackResponse.data;
+    } catch (fallbackError) {
+      console.error('Fallback health check also failed:', fallbackError);
+      // If in development and API is unreachable, provide mock data
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Falling back to mock health data for development');
+        return {
+          status: 'mock-healthy',
+          message: 'MOCK API (Real API unreachable)',
+          timestamp: new Date().toISOString(),
+          version: '1.0.0-mock'
+        };
+      }
+      throw error;
     }
-    throw error;
   }
 };
 
