@@ -1,8 +1,10 @@
 import axios from 'axios';
 import mockData from '../mockData/dashboard';
 
-// Get the API URL from environment variables, or use a default for development
-const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:5000/api';
+// Get the API URL from environment variables, or use a default based on current environment
+const isProduction = process.env.NODE_ENV === 'production';
+const API_URL = process.env.REACT_APP_API_URL || 
+  (isProduction ? '/api' : 'http://localhost:3000/api');
 
 console.log('Using API URL:', API_URL);
 
@@ -33,7 +35,7 @@ api.interceptors.response.use(
   }
 );
 
-// API endpoints
+// API endpoints - updated for Vercel serverless format
 export const endpoints = {
   // Health check
   health: '/health',
@@ -50,6 +52,7 @@ export const endpoints = {
   // Data endpoints
   recentFires: '/data/recent-fires',
   highRiskAreas: '/data/high-risk-areas',
+  dashboardStats: '/data/dashboard-stats',
 };
 
 // Health check
@@ -62,8 +65,8 @@ export const checkHealthStatus = async () => {
     console.error('Health check failed:', error);
     // Try with api prefix as fallback
     try {
-      console.log('Retrying with /api prefix:', API_URL + '/api' + endpoints.health);
-      const fallbackResponse = await axios.get(API_URL + '/api' + endpoints.health);
+      console.log('Retrying with /api prefix:', '/api' + endpoints.health);
+      const fallbackResponse = await axios.get('/api' + endpoints.health);
       return fallbackResponse.data;
     } catch (fallbackError) {
       console.error('Fallback health check also failed:', fallbackError);
@@ -118,7 +121,7 @@ export const assessDamage = async (requestData) => {
 // Get dashboard stats
 export const getDashboardStats = async () => {
   try {
-    const response = await api.get(`/data/dashboard-stats`);
+    const response = await api.get(endpoints.dashboardStats);
     return response.data;
   } catch (error) {
     console.error('Failed to fetch dashboard stats:', error);
