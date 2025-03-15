@@ -1,10 +1,22 @@
 import axios from 'axios';
 import mockData from '../mockData/dashboard';
 
-// Get the API URL from environment variables, or use a default based on current environment
-const isProduction = process.env.NODE_ENV === 'production';
-const API_URL = process.env.REACT_APP_API_URL || 
-  (isProduction ? '/api' : 'http://localhost:3000/api');
+// Get the API URL based on environment and hostname
+const getApiUrl = () => {
+  const isProduction = process.env.NODE_ENV === 'production';
+  const hostname = window.location.hostname;
+  
+  // On Vercel deployment
+  if (isProduction || hostname.includes('vercel.app')) {
+    // Use relative path for same-domain API
+    return '/api';
+  }
+  
+  // Local development
+  return 'http://localhost:3000/api';
+};
+
+const API_URL = process.env.REACT_APP_API_URL || getApiUrl();
 
 console.log('Using API URL:', API_URL);
 

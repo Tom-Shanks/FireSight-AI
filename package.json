@@ -1,13 +1,33 @@
 {
-  "name": "wildfire-prediction-system",
+  "name": "firesight-ai",
   "version": "1.0.0",
-  "description": "Wildfire Prediction System",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "FireSight AI - Wildfire Prediction and Prevention System",
+  "private": true,
+  "engines": {
+    "node": ">=18.x"
   },
-  "author": "",
-  "license": "ISC",
+  "scripts": {
+    "build": "bash ./build.sh",
+    "vercel-build": "bash ./build.sh",
+    "start": "cd frontend && npm start",
+    "test": "cd frontend && npm test"
+  },
+  "workspaces": [
+    "frontend",
+    "api"
+  ],
+  "keywords": [
+    "wildfire",
+    "prediction",
+    "machine learning",
+    "risk assessment"
+  ],
+  "author": "FireSight AI Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tom-Shanks/FireSight-AI.git"
+  },
   "devDependencies": {
     "serverless": "^3.30.1",
     "serverless-python-requirements": "^6.0.0",
