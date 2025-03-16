@@ -2,6 +2,8 @@
 
 FireSight AI is a comprehensive platform for predicting, monitoring, and responding to wildfire threats using machine learning, satellite imagery, and environmental data analysis.
 
+*Last updated: March 2025*
+
 ## Project Overview
 
 FireSight AI combines advanced machine learning models with real-time environmental data to:
@@ -53,9 +55,9 @@ FireSight AI combines advanced machine learning models with real-time environmen
 
 ### Prerequisites
 
-- Node.js (v14+)
-- npm or yarn
-- Python 3.8+ (for data pipeline)
+- Node.js (v18+)
+- npm, yarn, or pnpm
+- Python 3.11+ (for data pipeline)
 - AWS account (for deployment)
 
 ### Local Development
@@ -108,6 +110,18 @@ We welcome contributions to FireSight AI! Please see our [Contributing Guide](CO
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Intellectual Property Protection
+
+FireSight AI, including all source code, documentation, algorithms, and methodologies, are the exclusive property of FireSight AI and its contributors. All rights reserved.
+
+- The codebase is protected under copyright law (© 2023-2025 FireSight AI)
+- The machine learning models and methodologies contain trade secrets and proprietary information
+- Unauthorized use, reproduction, or distribution is strictly prohibited
+- Any use of this codebase must comply with the terms of the LICENSE file
+- Contributors must sign a Contributor License Agreement (CLA) before their contributions can be accepted
+
+For licensing inquiries, please contact legal@firesight-ai.com.
 
 ## Acknowledgments
 

@@ -7,10 +7,12 @@
     "node": ">=18.x"
   },
   "scripts": {
-    "build": "bash ./build.sh",
-    "vercel-build": "bash ./build.sh",
+    "build": "cd frontend && npm install && npm run build",
+    "vercel-build": "cd frontend && npm install && npm run build",
     "start": "cd frontend && npm start",
-    "test": "cd frontend && npm test"
+    "test": "cd frontend && npm test",
+    "install:api": "cd api && npm install",
+    "postinstall": "npm run install:api"
   },
   "workspaces": [
     "frontend",

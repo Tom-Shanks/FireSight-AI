@@ -5,15 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Page Not Found - FireSight AI</title>
   <script>
-    // Single Page App redirect script for Vercel - handles client-side routing
-    // This will redirect all 404s to root and let the React Router handle the routing
-    window.onload = function() {
-      // Save the URL that the user was trying to access
-      sessionStorage.setItem('redirect', window.location.pathname);
-      
-      // Redirect to the root
-      window.location.href = '/';
-    }
+    // Redirect to frontend
+    window.location.href = '/';
   </script>
   <style>
     body {
@@ -46,19 +39,6 @@
       margin-bottom: 1.5rem;
       line-height: 1.6;
     }
-    .btn {
-      display: inline-block;
-      background-color: #3498db;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 4px;
-      text-decoration: none;
-      font-weight: 500;
-      transition: background-color 0.3s;
-    }
-    .btn:hover {
-      background-color: #2980b9;
-    }
     .loading {
       display: inline-block;
       width: 30px;
@@ -77,9 +57,7 @@
 <body>
   <div class="container">
     <h1>404</h1>
-    <p>Redirecting you to the homepage...</p>
-    <p>If you are not redirected automatically, click the button below.</p>
-    <a href="/" class="btn">Go to Homepage</a>
+    <p>Page not found. Redirecting to homepage...</p>
     <div class="loading"></div>
   </div>
 </body>

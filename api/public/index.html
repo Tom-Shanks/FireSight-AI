@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FireSight AI API</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: #333;
+      line-height: 1.6;
+    }
+    .container {
+      width: 90%;
+      max-width: 800px;
+      background-color: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      margin-top: 0;
+      color: #2c3e50;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 0.5rem;
+    }
+    .endpoint {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background-color: #f8f9fa;
+      border-left: 4px solid #3498db;
+      border-radius: 0 4px 4px 0;
+    }
+    .method {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-weight: bold;
+      margin-right: 0.5rem;
+    }
+    .get {
+      background-color: #2ecc71;
+      color: white;
+    }
+    .post {
+      background-color: #3498db;
+      color: white;
+    }
+    a {
+      color: #3498db;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    footer {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #7f8c8d;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>FireSight AI API</h1>
+    <p>Welcome to the FireSight AI API. This API provides endpoints for wildfire prediction and monitoring.</p>
+    
+    <h2>Available Endpoints</h2>
+    
+    <div class="endpoint">
+      <span class="method get">GET</span>
+      <strong>/api/health</strong>
+      <p>Check the health status of the API.</p>
+    </div>
+    
+    <div class="endpoint">
+      <span class="method post">POST</span>
+      <strong>/api/predict/risk</strong>
+      <p>Predict wildfire risk for a specific location.</p>
+    </div>
+    
+    <div class="endpoint">
+      <span class="method get">GET</span>
+      <strong>/api/data/dashboard-stats</strong>
+      <p>Get statistics for the dashboard.</p>
+    </div>
+    
+    <div class="endpoint">
+      <span class="method get">GET</span>
+      <strong>/api/data/high-risk-areas</strong>
+      <p>Get information about high-risk areas.</p>
+    </div>
+    
+    <div class="endpoint">
+      <span class="method get">GET</span>
+      <strong>/api/data/recent-fires</strong>
+      <p>Get data about recent fires.</p>
+    </div>
+    
+    <p>For more information, see the <a href="https://github.com/Tom-Shanks/FireSight-AI">GitHub repository</a>.</p>
+    
+    <footer>
+      FireSight AI — Wildfire Prediction and Prevention System
+    </footer>
+  </div>
+</body>
+</html> 

@@ -15,6 +15,36 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
       integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
       crossorigin=""/>
+    <script>
+      // Handle redirects from 404 page
+      window.onload = function() {
+        // Check if we have a redirect path stored
+        const redirectPath = sessionStorage.getItem('redirect');
+        if (redirectPath) {
+          // Clear the redirect to prevent future redirects
+          sessionStorage.removeItem('redirect');
+          
+          // Get the base URL
+          const baseUrl = window.location.origin;
+          
+          // Strip the base URL if it exists in the redirectPath
+          let cleanPath = redirectPath;
+          if (redirectPath.startsWith(baseUrl)) {
+            cleanPath = redirectPath.substring(baseUrl.length);
+          }
+          
+          // If we have React Router loaded, use it to navigate
+          if (window.history && window.history.pushState) {
+            // Use history API to update the URL without refreshing
+            window.history.pushState(null, '', cleanPath);
+            
+            // Dispatch a popstate event to notify React Router
+            const navEvent = new PopStateEvent('popstate');
+            window.dispatchEvent(navEvent);
+          }
+        }
+      };
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
