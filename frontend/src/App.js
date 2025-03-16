@@ -9,14 +9,18 @@ import {
   Paper,
   Grid,
   CircularProgress,
-  Alert
+  Alert,
+  Fab,
+  Tooltip
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import BugReportIcon from '@mui/icons-material/BugReport';
 import Navigation from './components/Navigation';
 import MapComponent from './components/MapComponent';
 import DashboardStats from './components/DashboardStats';
 import PredictionForm from './components/PredictionForm';
+import DebugInfo from './components/DebugInfo';
 import apiService from './services/api';
 
 // Create a theme
@@ -48,39 +52,35 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-    h5: {
-      fontWeight: 500,
-    },
-    h6: {
-      fontWeight: 500,
-    },
-  },
-  components: {
-    MuiPaper: {
-      defaultProps: {
-        elevation: 0,
-      },
-      styleOverrides: {
-        root: {
-          borderRadius: 8,
-        },
-      },
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: 'none',
-          borderRadius: 8,
-        },
-      },
-    },
   },
 });
 
-function App() {
-  const [currentPage, setCurrentPage] = useState('dashboard');
+function App({ defaultPage = 'dashboard', showDebug: initialShowDebug = false }) {
+  const [currentPage, setCurrentPage] = useState(defaultPage);
   const [apiStatus, setApiStatus] = useState('checking');
   const [apiStatusMessage, setApiStatusMessage] = useState('');
+  const [showDebug, setShowDebug] = useState(initialShowDebug);
+  
+  // Set initial page based on props
+  useEffect(() => {
+    setCurrentPage(defaultPage);
+  }, [defaultPage]);
+  
+  // Add keyboard listener for debug mode (Ctrl+Shift+D)
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      // Check for Ctrl+Shift+D keyboard shortcut
+      if (event.ctrlKey && event.shiftKey && event.key === 'D') {
+        setShowDebug(prev => !prev);
+      }
+    };
+    
+    document.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
   
   useEffect(() => {
     const checkApiStatus = async () => {
@@ -119,40 +119,8 @@ function App() {
           <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
             <Typography variant="h5" sx={{ mb: 3 }}>Wildfire Alerts</Typography>
             <Typography>
-              This feature is coming soon. You will be able to set up custom alerts for specific regions.
+              Alerts feature is coming soon. You'll be able to configure notifications for high-risk areas.
             </Typography>
-          </Paper>
-        );
-      case 'about':
-        return (
-          <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
-            <Typography variant="h5" sx={{ mb: 3 }}>About FireSight AI</Typography>
-            <Typography paragraph>
-              FireSight AI is an advanced wildfire prediction and prevention system that uses machine learning and satellite imagery to identify high-risk areas before fires start.
-            </Typography>
-            <Typography paragraph>
-              Our system analyzes multiple data sources including weather patterns, vegetation density, historical fire data, and terrain information to provide accurate risk assessments and predictions.
-            </Typography>
-            <Typography paragraph>
-              Key features include:
-            </Typography>
-            <ul>
-              <li>
-                <Typography>Real-time wildfire risk mapping</Typography>
-              </li>
-              <li>
-                <Typography>Predictive analytics for fire spread</Typography>
-              </li>
-              <li>
-                <Typography>Custom risk assessments for specific locations</Typography>
-              </li>
-              <li>
-                <Typography>Early warning alerts for high-risk conditions</Typography>
-              </li>
-              <li>
-                <Typography>Historical data analysis and trend identification</Typography>
-              </li>
-            </ul>
           </Paper>
         );
       case 'settings':
@@ -160,7 +128,7 @@ function App() {
           <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
             <Typography variant="h5" sx={{ mb: 3 }}>Settings</Typography>
             <Typography>
-              Settings configuration will be available in a future update.
+              Settings feature is coming soon. You'll be able to customize the dashboard and notification preferences.
             </Typography>
           </Paper>
         );
@@ -169,10 +137,20 @@ function App() {
     }
   };
   
+  // Show debug panel if explicitly enabled
+  if (showDebug) {
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <DebugInfo onClose={() => setShowDebug(false)} />
+      </ThemeProvider>
+    );
+  }
+  
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <CssBaseline />
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
           <Navigation onNavigate={handleNavigate} currentPage={currentPage} />
           
@@ -202,6 +180,20 @@ function App() {
             
             {/* Main Content */}
             {renderPage()}
+            
+            {/* Debug button visible only in development or with URL param */}
+            {(process.env.NODE_ENV !== 'production' || window.location.search.includes('debug=true')) && (
+              <Tooltip title="Open Debug Panel (Ctrl+Shift+D)">
+                <Fab 
+                  color="secondary" 
+                  size="medium" 
+                  onClick={() => setShowDebug(true)}
+                  sx={{ position: 'fixed', bottom: 20, right: 20 }}
+                >
+                  <BugReportIcon />
+                </Fab>
+              </Tooltip>
+            )}
           </Container>
           
           {/* Footer */}

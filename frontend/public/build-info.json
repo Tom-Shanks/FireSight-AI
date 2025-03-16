@@ -1,0 +1,10 @@
+{
+  "buildTime": "PLACEHOLDER_BUILD_TIME",
+  "nodeEnv": "PLACEHOLDER_NODE_ENV",
+  "commit": "PLACEHOLDER_COMMIT_HASH",
+  "branch": "PLACEHOLDER_BRANCH_NAME",
+  "vercel": {
+    "environment": "PLACEHOLDER_VERCEL_ENV",
+    "region": "PLACEHOLDER_VERCEL_REGION"
+  }
+} 
