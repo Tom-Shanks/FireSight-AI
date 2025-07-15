@@ -7,34 +7,61 @@ const navLinks = document.querySelectorAll('.nav-menu a');
 const contactForm = document.getElementById('contactForm');
 
 // Mobile Navigation Toggle
-navToggle.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
-    navToggle.classList.toggle('active');
-});
-
-// Close mobile menu when clicking on a link
-navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        navMenu.classList.remove('active');
-        navToggle.classList.remove('active');
-    });
-});
-
-// Smooth scrolling for navigation links
-navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const targetId = link.getAttribute('href');
-        const targetSection = document.querySelector(targetId);
+if (navToggle && navMenu) {
+    navToggle.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+        navToggle.classList.toggle('active');
         
-        if (targetSection) {
-            targetSection.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+        // Update aria-expanded attribute
+        const isExpanded = navMenu.classList.contains('active');
+        navToggle.setAttribute('aria-expanded', isExpanded);
+    });
+
+    // Close mobile menu when clicking on a link
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            navMenu.classList.remove('active');
+            navToggle.classList.remove('active');
+            navToggle.setAttribute('aria-expanded', 'false');
+        });
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!navToggle.contains(e.target) && !navMenu.contains(e.target)) {
+            navMenu.classList.remove('active');
+            navToggle.classList.remove('active');
+            navToggle.setAttribute('aria-expanded', 'false');
         }
     });
-});
+
+    // Close mobile menu on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+            navMenu.classList.remove('active');
+            navToggle.classList.remove('active');
+            navToggle.setAttribute('aria-expanded', 'false');
+        }
+    });
+}
+
+// Smooth scrolling for navigation links
+if (navLinks.length > 0) {
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href');
+            const targetSection = document.querySelector(targetId);
+            
+            if (targetSection) {
+                targetSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+}
 
 // Header background change on scroll
 window.addEventListener('scroll', () => {
@@ -49,30 +76,32 @@ window.addEventListener('scroll', () => {
 });
 
 // Contact Form Handling
-contactForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    // Get form data
-    const formData = new FormData(contactForm);
-    const name = formData.get('name');
-    const email = formData.get('email');
-    const message = formData.get('message');
-    
-    // Simple validation
-    if (!name || !email || !message) {
-        showNotification('Please fill in all fields', 'error');
-        return;
-    }
-    
-    if (!isValidEmail(email)) {
-        showNotification('Please enter a valid email address', 'error');
-        return;
-    }
-    
-    // Simulate form submission
-    showNotification('Thank you for your message! We\'ll get back to you soon.', 'success');
-    contactForm.reset();
-});
+if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = new FormData(contactForm);
+        const name = formData.get('name');
+        const email = formData.get('email');
+        const message = formData.get('message');
+        
+        // Simple validation
+        if (!name || !email || !message) {
+            showNotification('Please fill in all fields', 'error');
+            return;
+        }
+        
+        if (!isValidEmail(email)) {
+            showNotification('Please enter a valid email address', 'error');
+            return;
+        }
+        
+        // Simulate form submission
+        showNotification('Thank you for your message! We\'ll get back to you soon.', 'success');
+        contactForm.reset();
+    });
+}
 
 // Email validation function
 function isValidEmail(email) {
@@ -207,10 +236,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Feature card hover effects
+// Card hover effects
 document.addEventListener('DOMContentLoaded', () => {
     const featureCards = document.querySelectorAll('.feature-card');
+    const docCards = document.querySelectorAll('.doc-card');
     
+    // Feature card hover effects
     featureCards.forEach(card => {
         card.addEventListener('mouseenter', () => {
             card.style.transform = 'translateY(-10px) scale(1.02)';
@@ -220,12 +251,8 @@ document.addEventListener('DOMContentLoaded', () => {
             card.style.transform = 'translateY(0) scale(1)';
         });
     });
-});
-
-// Doc card hover effects
-document.addEventListener('DOMContentLoaded', () => {
-    const docCards = document.querySelectorAll('.doc-card');
     
+    // Doc card hover effects
     docCards.forEach(card => {
         card.addEventListener('mouseenter', () => {
             card.style.transform = 'translateY(-8px)';
@@ -344,19 +371,62 @@ console.log(`
 🔗 GitHub: https://github.com/Tom-Shanks/FireSight-AI
 `);
 
-// Performance monitoring
+// Performance monitoring and analytics
 if ('performance' in window) {
     window.addEventListener('load', () => {
         setTimeout(() => {
             const perfData = performance.getEntriesByType('navigation')[0];
-            console.log('🚀 Page loaded in:', Math.round(perfData.loadEventEnd - perfData.fetchStart), 'ms');
+            const loadTime = Math.round(perfData.loadEventEnd - perfData.fetchStart);
+            console.log('🚀 Page loaded in:', loadTime, 'ms');
+            
+            // Track performance metrics
+            if (loadTime > 3000) {
+                console.warn('⚠️ Slow page load detected:', loadTime, 'ms');
+            }
+            
+            // Track user interactions
+            document.addEventListener('click', (e) => {
+                const target = e.target.closest('a, button');
+                if (target) {
+                    console.log('👆 User clicked:', target.textContent || target.tagName);
+                }
+            });
         }, 0);
     });
 }
 
-// Error handling
+// Comprehensive error handling
 window.addEventListener('error', (e) => {
     console.error('🚨 JavaScript Error:', e.error);
+    
+    // Show user-friendly error message
+    showNotification('An error occurred. Please refresh the page.', 'error');
+});
+
+// Handle unhandled promise rejections
+window.addEventListener('unhandledrejection', (e) => {
+    console.error('🚨 Unhandled Promise Rejection:', e.reason);
+    showNotification('A network error occurred. Please check your connection.', 'error');
+});
+
+// Handle resource loading errors
+window.addEventListener('load', () => {
+    // Check for failed image loads
+    const images = document.querySelectorAll('img');
+    images.forEach(img => {
+        img.addEventListener('error', () => {
+            console.warn('⚠️ Image failed to load:', img.src);
+            img.style.display = 'none';
+        });
+    });
+    
+    // Check for failed CSS loads
+    const links = document.querySelectorAll('link[rel="stylesheet"]');
+    links.forEach(link => {
+        link.addEventListener('error', () => {
+            console.warn('⚠️ CSS failed to load:', link.href);
+        });
+    });
 });
 
 // Utility functions
@@ -403,6 +473,19 @@ const utils = {
 
 // Export utils for potential use in other scripts
 window.FireSightUtils = utils;
+
+// Register service worker for PWA features
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+                console.log('🔥 FireSight AI: Service Worker registered successfully:', registration.scope);
+            })
+            .catch((error) => {
+                console.log('🔥 FireSight AI: Service Worker registration failed:', error);
+            });
+    });
+}
 
 // Initialize all functionality when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {

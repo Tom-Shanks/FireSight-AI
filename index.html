@@ -14,10 +14,35 @@
     <meta property="og:description" content="Advanced wildfire prediction and prevention system using machine learning and risk assessment">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://tom-shanks.github.io/FireSight-AI/">
+    <meta property="og:image" content="https://tom-shanks.github.io/FireSight-AI/favicon.svg">
+    <meta property="og:site_name" content="FireSight AI">
+    
+    <!-- Twitter Card meta tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="FireSight AI - Wildfire Prediction and Prevention System">
+    <meta name="twitter:description" content="Advanced wildfire prediction and prevention system using machine learning and risk assessment">
+    <meta name="twitter:image" content="https://tom-shanks.github.io/FireSight-AI/favicon.svg">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://tom-shanks.github.io/FireSight-AI/">
+    
+    <!-- Additional SEO meta tags -->
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    <meta name="author" content="FireSight AI Team">
+    <meta name="copyright" content="FireSight AI Team">
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ff6b35">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="FireSight AI">
     
     <!-- CSS -->
     <link rel="stylesheet" href="styles.css">
@@ -29,30 +54,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
     <!-- Navigation -->
-    <nav class="navbar">
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
         <div class="nav-container">
             <div class="nav-logo">
-                <i class="fas fa-fire"></i>
+                <i class="fas fa-fire" aria-hidden="true"></i>
                 <span>FireSight AI</span>
             </div>
-            <ul class="nav-menu">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#demo">Demo</a></li>
-                <li><a href="#documentation">Documentation</a></li>
-                <li><a href="#contact">Contact</a></li>
+            <ul class="nav-menu" role="menubar">
+                <li role="none"><a href="#home" role="menuitem">Home</a></li>
+                <li role="none"><a href="#features" role="menuitem">Features</a></li>
+                <li role="none"><a href="#demo" role="menuitem">Demo</a></li>
+                <li role="none"><a href="#documentation" role="menuitem">Documentation</a></li>
+                <li role="none"><a href="#contact" role="menuitem">Contact</a></li>
             </ul>
-            <div class="nav-toggle">
+            <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-menu">
                 <span></span>
                 <span></span>
                 <span></span>
-            </div>
+            </button>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="hero">
+    <section id="home" class="hero" role="main" id="main-content">
         <div class="hero-container">
             <div class="hero-content">
                 <h1>FireSight AI</h1>
@@ -67,7 +95,7 @@
             </div>
             <div class="hero-image">
                 <div class="hero-placeholder">
-                    <i class="fas fa-fire fa-8x"></i>
+                    <i class="fas fa-fire fa-8x" aria-hidden="true"></i>
                 </div>
             </div>
         </div>
@@ -80,28 +108,28 @@
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-brain"></i>
+                        <i class="fas fa-brain" aria-hidden="true"></i>
                     </div>
                     <h3>Machine Learning</h3>
                     <p>Advanced AI algorithms analyze weather patterns, vegetation data, and historical fire incidents to predict wildfire risks.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-chart-line"></i>
+                        <i class="fas fa-chart-line" aria-hidden="true"></i>
                     </div>
                     <h3>Risk Assessment</h3>
                     <p>Real-time risk scoring system that evaluates multiple factors to provide accurate wildfire probability assessments.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-satellite"></i>
+                        <i class="fas fa-satellite" aria-hidden="true"></i>
                     </div>
                     <h3>Satellite Integration</h3>
                     <p>Integrates with satellite imagery and remote sensing data for comprehensive environmental monitoring.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
+                        <i class="fas fa-shield-alt" aria-hidden="true"></i>
                     </div>
                     <h3>Early Warning System</h3>
                     <p>Automated alerts and notifications to emergency services and communities at risk of wildfire incidents.</p>
@@ -116,7 +144,7 @@
             <h2>Live Demo</h2>
             <div class="demo-container">
                 <div class="demo-placeholder">
-                    <i class="fas fa-play-circle fa-4x"></i>
+                    <i class="fas fa-play-circle fa-4x" aria-hidden="true"></i>
                     <p>Interactive Demo Coming Soon</p>
                     <p class="demo-description">Experience the FireSight AI system in action with our interactive demonstration.</p>
                 </div>
@@ -131,27 +159,27 @@
             <div class="docs-grid">
                 <div class="doc-card">
                     <div class="doc-icon">
-                        <i class="fas fa-book"></i>
+                        <i class="fas fa-book" aria-hidden="true"></i>
                     </div>
                     <h3>API Documentation</h3>
                     <p>Complete API reference and integration guide for developers.</p>
-                    <a href="#" class="doc-link">Read More <i class="fas fa-arrow-right"></i></a>
+                    <a href="#" class="doc-link">Read More <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
                 </div>
                 <div class="doc-card">
                     <div class="doc-icon">
-                        <i class="fas fa-code"></i>
+                        <i class="fas fa-code" aria-hidden="true"></i>
                     </div>
                     <h3>Developer Guide</h3>
                     <p>Step-by-step guide to set up and customize the FireSight AI system.</p>
-                    <a href="#" class="doc-link">Read More <i class="fas fa-arrow-right"></i></a>
+                    <a href="#" class="doc-link">Read More <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
                 </div>
                 <div class="doc-card">
                     <div class="doc-icon">
-                        <i class="fas fa-cogs"></i>
+                        <i class="fas fa-cogs" aria-hidden="true"></i>
                     </div>
                     <h3>Configuration</h3>
                     <p>Configuration options and system requirements for deployment.</p>
-                    <a href="#" class="doc-link">Read More <i class="fas fa-arrow-right"></i></a>
+                    <a href="#" class="doc-link">Read More <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>
@@ -165,15 +193,15 @@
                 <div class="contact-info">
                     <h3>Contact Information</h3>
                     <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
+                        <i class="fas fa-envelope" aria-hidden="true"></i>
                         <span>contact@firesight-ai.com</span>
                     </div>
                     <div class="contact-item">
-                        <i class="fab fa-github"></i>
-                        <a href="https://github.com/Tom-Shanks/FireSight-AI" target="_blank">GitHub Repository</a>
+                        <i class="fab fa-github" aria-hidden="true"></i>
+                        <a href="https://github.com/Tom-Shanks/FireSight-AI" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
                     </div>
                     <div class="contact-item">
-                        <i class="fas fa-globe"></i>
+                        <i class="fas fa-globe" aria-hidden="true"></i>
                         <span>www.firesight-ai.com</span>
                     </div>
                 </div>
@@ -201,7 +229,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-logo">
-                    <i class="fas fa-fire"></i>
+                    <i class="fas fa-fire" aria-hidden="true"></i>
                     <span>FireSight AI</span>
                 </div>
                 <div class="footer-links">
@@ -212,9 +240,9 @@
                     <a href="#contact">Contact</a>
                 </div>
                 <div class="footer-social">
-                    <a href="https://github.com/Tom-Shanks/FireSight-AI" target="_blank"><i class="fab fa-github"></i></a>
-                    <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
-                    <a href="#" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/Tom-Shanks/FireSight-AI" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fab fa-github" aria-hidden="true"></i></a>
+                    <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+                    <a href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin" aria-hidden="true"></i></a>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -223,6 +251,34 @@
         </div>
     </footer>
 
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "FireSight AI",
+        "description": "Advanced wildfire prediction and prevention system using machine learning and risk assessment",
+        "url": "https://tom-shanks.github.io/FireSight-AI/",
+        "applicationCategory": "Environmental Software",
+        "operatingSystem": "Web",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Organization",
+            "name": "FireSight AI Team"
+        },
+        "creator": {
+            "@type": "Organization",
+            "name": "FireSight AI Team"
+        },
+        "keywords": "wildfire, prediction, machine learning, risk assessment, fire prevention",
+        "inLanguage": "en-US"
+    }
+    </script>
+    
     <!-- JavaScript -->
     <script src="script.js"></script>
 </body>

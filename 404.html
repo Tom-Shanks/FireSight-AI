@@ -5,8 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Page Not Found - FireSight AI</title>
   <script>
-    // Redirect to frontend
-    window.location.href = '/';
+    // Redirect to frontend with delay and user option
+    setTimeout(() => {
+      const redirect = confirm('Page not found. Would you like to go to the homepage?');
+      if (redirect) {
+        window.location.href = '/';
+      }
+    }, 2000);
   </script>
   <style>
     body {
