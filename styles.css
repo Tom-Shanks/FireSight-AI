@@ -36,6 +36,7 @@
 
 html {
     scroll-behavior: smooth;
+    scroll-padding-top: 120px; /* Adjust for fixed navbar + hiring banner */
 }
 
 body {
@@ -56,17 +57,33 @@ body {
 h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     margin-bottom: 1rem;
+    line-height: 1.2;
 }
 
 h1 {
-    font-size: 3rem;
-    font-weight: 700;
+    font-size: 3.5rem;
+    font-weight: 800;
+    letter-spacing: -1px;
 }
 
 h2 {
     font-size: 2.5rem;
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 4rem;
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+h2:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #ff6b35, #e74c3c);
+    border-radius: 2px;
 }
 
 h3 {
@@ -81,14 +98,18 @@ p {
 /* Buttons */
 .btn {
     display: inline-block;
-    padding: 12px 30px;
+    padding: 14px 32px;
     text-decoration: none;
-    border-radius: 5px;
-    font-weight: 500;
+    border-radius: 8px;
+    font-weight: 600;
     transition: all 0.3s ease;
     border: none;
     cursor: pointer;
     font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
 }
 
 .btn-primary {
@@ -116,17 +137,15 @@ p {
 
 /* Navigation */
 .navbar {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px); /* Safari support */
+    background: #ffffff;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1000;
+    z-index: 1001;
     padding: 1rem 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    transition: background 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
 }
 
 .nav-container {
@@ -161,11 +180,27 @@ p {
     text-decoration: none;
     color: #333;
     font-weight: 500;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-menu a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #ff6b35;
+    transition: width 0.3s ease;
 }
 
 .nav-menu a:hover {
     color: #ff6b35;
+}
+
+.nav-menu a:hover::after {
+    width: 100%;
 }
 
 .nav-toggle {
@@ -184,12 +219,42 @@ p {
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 120px 0 80px;
+    background: linear-gradient(135deg, #ff6b35 0%, #e74c3c 100%);
+    padding: 80px 0 80px;
     color: white;
-    min-height: 100vh;
+    min-height: calc(100vh - 70px);
     display: flex;
     align-items: center;
+    position: relative;
+}
+
+/* Hiring Banner */
+.hiring-banner {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background: linear-gradient(90deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    padding: 12px 20px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 0.9rem;
+    z-index: 999;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.hiring-banner a {
+    color: #ff6b35;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 15px;
+    transition: color 0.3s ease;
+}
+
+.hiring-banner a:hover {
+    color: #ff8c42;
+    text-decoration: underline;
 }
 
 .hero-container {
@@ -248,9 +313,58 @@ p {
     opacity: 0.8;
 }
 
+.hero-location {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+}
+
+/* Hero Stats */
+.hero-stats {
+    display: flex;
+    gap: 2.5rem;
+    margin: 2.5rem 0;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1.5rem 2rem;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.highlight {
+    color: #ffeb3b;
+    font-weight: 700;
+}
+
 /* Features Section */
 .features {
-    padding: 80px 0;
+    padding: 100px 0;
     background: #f8f9fa;
 }
 
@@ -262,11 +376,12 @@ p {
 
 .feature-card {
     background: white;
-    padding: 2rem;
-    border-radius: 10px;
+    padding: 2.5rem;
+    border-radius: 12px;
     text-align: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
 }
 
 .feature-card:hover {
@@ -299,7 +414,7 @@ p {
 
 /* Demo Section */
 .demo {
-    padding: 80px 0;
+    padding: 100px 0;
     background: white;
 }
 
@@ -334,7 +449,7 @@ p {
 
 /* Documentation Section */
 .documentation {
-    padding: 80px 0;
+    padding: 100px 0;
     background: #f8f9fa;
 }
 
@@ -357,7 +472,7 @@ p {
 }
 
 .doc-icon {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #ff6b35, #e74c3c);
     color: white;
     width: 60px;
     height: 60px;
@@ -395,7 +510,7 @@ p {
 
 /* Contact Section */
 .contact {
-    padding: 80px 0;
+    padding: 100px 0;
     background: white;
 }
 
@@ -447,11 +562,18 @@ p {
 .form-group input,
 .form-group textarea {
     width: 100%;
-    padding: 12px;
-    border: 2px solid #e0e0e0;
-    border-radius: 5px;
+    padding: 14px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
     font-size: 1rem;
-    transition: border-color 0.3s ease;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.form-group input:hover,
+.form-group textarea:hover {
+    border-color: #ff6b35;
+    background: #ffffff;
 }
 
 .form-group input:focus,
@@ -466,9 +588,9 @@ p {
 
 /* Footer */
 .footer {
-    background: #333;
+    background: #1a1a1a;
     color: white;
-    padding: 40px 0 20px;
+    padding: 60px 0 30px;
 }
 
 .footer-content {
@@ -532,10 +654,21 @@ p {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .hiring-banner {
+        font-size: 0.8rem;
+        padding: 10px 15px;
+    }
+    
+    .hiring-banner a {
+        display: block;
+        margin-top: 5px;
+        margin-left: 0;
+    }
+    
     .nav-menu {
         position: fixed;
         left: -100%;
-        top: 70px;
+        top: 110px; /* Adjusted for hiring banner */
         flex-direction: column;
         background-color: white;
         width: 100%;
@@ -543,6 +676,21 @@ p {
         transition: 0.3s;
         box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
         padding: 2rem 0;
+    }
+    
+    .hero {
+        padding-top: 140px; /* Account for navbar + hiring banner */
+        min-height: 100vh;
+    }
+    
+    .hero-stats {
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .stat-item {
+        padding: 1rem 1.5rem;
+        flex: 0 1 calc(50% - 0.5rem);
     }
 
     .nav-menu.active {
@@ -651,9 +799,21 @@ p {
     }
 }
 
+/* Remove automatic fade animations that can cause layout issues */
 .feature-card,
 .doc-card {
-    animation: fadeInUp 0.6s ease-out;
+    animation: none;
+}
+
+/* Add subtle hover animations instead */
+.feature-card {
+    transform: translateY(0);
+}
+
+.feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    border-color: #f0f0f0;
 }
 
 /* Scroll animations */
