@@ -6,6 +6,64 @@ const navMenu = document.querySelector('.nav-menu');
 const navLinks = document.querySelectorAll('.nav-menu a');
 const contactForm = document.getElementById('contactForm');
 
+// Colorado visitor detection
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        
+        // Check if visitor is in Colorado (rough bounds)
+        const inColorado = (lat > 37 && lat < 41 && lng > -109 && lng < -102);
+        
+        if (inColorado) {
+            console.log('Colorado visitor detected!');
+            
+            // Show Colorado-specific content
+            const heroSubtitle = document.querySelector('.hero-subtitle');
+            if (heroSubtitle) {
+                heroSubtitle.innerHTML += ' <span style="color: #ff6b35;">📍 Serving your area!</span>';
+            }
+            
+            // Track Colorado visitor
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'colorado_visitor', {
+                    'event_category': 'engagement',
+                    'event_label': 'Colorado visitor detected'
+                });
+            }
+        }
+    });
+}
+
+// Track important metrics
+document.addEventListener('DOMContentLoaded', () => {
+    // Track page views
+    const viewCount = parseInt(localStorage.getItem('firesight_views') || '0') + 1;
+    localStorage.setItem('firesight_views', viewCount);
+    
+    // Update agency view count (mock data for demo)
+    const agencyCount = 247 + Math.floor(viewCount / 10);
+    const agencyElements = document.querySelectorAll('[data-metric="agencies"]');
+    agencyElements.forEach(el => {
+        el.textContent = agencyCount;
+    });
+    
+    // Add click tracking for CTA buttons
+    document.querySelectorAll('.btn-primary, .btn-secondary').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const label = e.target.textContent.trim();
+            console.log('CTA clicked:', label);
+            
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'cta_click', {
+                    'event_category': 'engagement',
+                    'event_label': label
+                });
+            }
+        });
+    });
+});
+
 // Mobile Navigation Toggle
 if (navToggle && navMenu) {
     navToggle.addEventListener('click', () => {

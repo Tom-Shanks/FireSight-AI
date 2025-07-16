@@ -11,13 +11,22 @@ import {
   CircularProgress,
   Alert,
   Fab,
-  Tooltip
+  Tooltip,
+  Tab,
+  Tabs,
+  Chip
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import BugReportIcon from '@mui/icons-material/BugReport';
+import MapIcon from '@mui/icons-material/Map';
+import CalculateIcon from '@mui/icons-material/Calculate';
+import RssFeedIcon from '@mui/icons-material/RssFeed';
 import Navigation from './components/Navigation';
 import MapComponent from './components/MapComponent';
+import ColoradoFireMap from './components/ColoradoFireMap';
+import CostCalculator from './components/CostCalculator';
+import LiveDataFeed from './components/LiveDataFeed';
 import DashboardStats from './components/DashboardStats';
 import PredictionForm from './components/PredictionForm';
 import DebugInfo from './components/DebugInfo';
@@ -57,6 +66,7 @@ const theme = createTheme({
 
 function App({ defaultPage = 'dashboard', showDebug: initialShowDebug = false }) {
   const [currentPage, setCurrentPage] = useState(defaultPage);
+  const [tabValue, setTabValue] = useState(0);
   const [apiStatus, setApiStatus] = useState('checking');
   const [apiStatusMessage, setApiStatusMessage] = useState('');
   const [showDebug, setShowDebug] = useState(initialShowDebug);
@@ -109,20 +119,42 @@ function App({ defaultPage = 'dashboard', showDebug: initialShowDebug = false })
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard':
-        return <DashboardStats />;
+        return (
+          <Box>
+            <Paper sx={{ mb: 3, p: 2, background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)', color: 'white' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
+                <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                  Colorado Wildfire Monitoring System
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                  <Chip label="🚁 Part 107 Pilot Available" sx={{ background: 'rgba(255,255,255,0.2)', color: 'white' }} />
+                  <Chip label="📍 Denver-Based" sx={{ background: 'rgba(255,255,255,0.2)', color: 'white' }} />
+                  <Chip label="🔥 Real-time Monitoring" sx={{ background: 'rgba(255,255,255,0.2)', color: 'white' }} />
+                </Box>
+              </Box>
+            </Paper>
+            
+            <Paper sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+              <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)}>
+                <Tab icon={<MapIcon />} label="Live Fire Map" />
+                <Tab icon={<CalculateIcon />} label="Cost Calculator" />
+                <Tab icon={<RssFeedIcon />} label="Activity Feed" />
+              </Tabs>
+            </Paper>
+            
+            <Box sx={{ mt: 2 }}>
+              {tabValue === 0 && <ColoradoFireMap />}
+              {tabValue === 1 && <CostCalculator />}
+              {tabValue === 2 && <LiveDataFeed />}
+            </Box>
+          </Box>
+        );
       case 'map':
-        return <MapComponent />;
+        return <ColoradoFireMap />;
       case 'prediction':
         return <PredictionForm />;
       case 'alerts':
-        return (
-          <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
-            <Typography variant="h5" sx={{ mb: 3 }}>Wildfire Alerts</Typography>
-            <Typography>
-              Alerts feature is coming soon. You'll be able to configure notifications for high-risk areas.
-            </Typography>
-          </Paper>
-        );
+        return <LiveDataFeed />;
       case 'settings':
         return (
           <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
@@ -133,7 +165,7 @@ function App({ defaultPage = 'dashboard', showDebug: initialShowDebug = false })
           </Paper>
         );
       default:
-        return <DashboardStats />;
+        return <ColoradoFireMap />;
     }
   };
   

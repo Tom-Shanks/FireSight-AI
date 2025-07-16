@@ -1,10 +1,10 @@
 {
-  "buildTime": "PLACEHOLDER_BUILD_TIME",
-  "nodeEnv": "PLACEHOLDER_NODE_ENV",
-  "commit": "PLACEHOLDER_COMMIT_HASH",
-  "branch": "PLACEHOLDER_BRANCH_NAME",
+  "buildTime": "2025-07-16T02:40:29.310Z",
+  "nodeEnv": "development",
+  "commit": "a63e995",
+  "branch": "cursor/colorado-wildfire-monitoring-system-enhancement-e13b",
   "vercel": {
-    "environment": "PLACEHOLDER_VERCEL_ENV",
-    "region": "PLACEHOLDER_VERCEL_REGION"
+    "environment": "local",
+    "region": "local"
   }
-} 
+}
